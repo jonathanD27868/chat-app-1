@@ -1,32 +1,12 @@
 /*
 
-automatic Scrolling
+Extra tasks
 
-
-
-Quand un new message arrive on veut qu'il s'affiche en bas de la page.
-Actuellement les nouveaux messages apparaissent à la suite des autres, ce qui est bien, mais on ne peut pas les voir si la longueur totale des msg est supérieure à celle de la fenêtre.
-On doit scroller manuellement!
-
-On va automatiser cela en prenant soin que l'automatic scroll ne s'exécute uniquement si on est bien au dernier msg affiché.
-Admettons qu'on souhaite relire des messages précédents et que manuellement on scroll vers le haut, ce serait énervant qu'à chaque nouveau message on soit ramené en bas de l'écran!
-
-Dons le scrolle automatique ne se fera pas si on déjà a scroller manuellement et qu'on n'est plus au dernier message reçu!
-
-
-On implémente la logique dans chat.js 
-
-On va implémenter la logique du code dans les events 'message' et 'locationMessage'
-On va alors créer une fonction que l'on va implémenter dans ces 2 events
-
-cf. chat.js fonction autoscroll()
-
-
-
-
+On ajoute la possibilité un utilisateur de créer une room ou de sélectionner une room éxistante
 
 
 */
+
 
 const express = require('express')
 const http = require('http')
@@ -35,6 +15,7 @@ const socketio = require('socket.io')
 const Filter = require('bad-words')
 const { generateMessage, generateLocationMessage } = require('./utils/messages')
 const { addUser, removeUser, getUser, getUsersInRoom } = require('../src/utils/users')
+const { addRoom, removeRoom, getAllRooms }  = require('../src/utils/rooms')
 
 
 const port = process.env.PORT
@@ -56,6 +37,9 @@ io.on('connection', (socket) => {
         if(error){
             return callback(error)
         }
+        
+        addRoom(user.room)
+        
         socket.join(user.room)
         
         socket.emit('message', generateMessage('Admin', 'Welcome!')) 
@@ -69,7 +53,12 @@ io.on('connection', (socket) => {
 
         callback()
     })
-    
+
+    // list of available rooms
+    socket.on('roomsListQuery', () => {
+        socket.emit('roomsList', getAllRooms())
+    })
+
     // message event listener
     socket.on("sendMessage", (message, callback) => {
         const user = getUser(socket.id)
@@ -98,6 +87,8 @@ io.on('connection', (socket) => {
         const user = removeUser(socket.id)
         if(user){
             io.to(user.room).emit('message', generateMessage('Admin', `${user.username} has left!`))
+
+            removeRoom(user.room)
 
             // users' list in sidebar
             io.to(user.room).emit('roomData', {

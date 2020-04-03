@@ -2,16 +2,16 @@ const users = []
 
 // add a new user
 const addUser = ({ id, username, room }) => {
-    // clean data
-    username = username.trim().toLowerCase()
-    room = room.trim().toLowerCase()
-
     // validate the data
     if(!username || !room){
         return {
             error: 'Username and room are required!'
         }
     }
+
+    // clean data
+    username = username.trim().toLowerCase()
+    room = room.trim().toLowerCase()
 
     // check for existing user
     const existingUser = users.find( user => {
@@ -45,6 +45,11 @@ const getUser = (id) => {
     return users.find( user => user.id === id)
 }
 
+// get all users
+const getUsers = () => {
+    return users
+}
+
 // get all user in a specific room
 const getUsersInRoom = (room) => {
     room = room.trim().toLowerCase()
@@ -55,5 +60,6 @@ module.exports = {
     addUser,
     removeUser,
     getUser,
+    getUsers,
     getUsersInRoom
 }

@@ -14,11 +14,26 @@
             <form action="/chat.html">
                 <label for="">Display name</label>
                 <input type="text" name="username" placeholder="Display name" required >
-                <label for="">Room</label>
-                <input type="text" name="room" placeholder="Room" required >
+                <label for="">Create a room</label>
+                <input type="text" name="createRoom" placeholder="Room">
+                <label for="">Or</label>
+                <select name="joinRoom" id="rooms">
+                    <option value="">Select an existing room</option>
+                </select>
                 <button type="submit">Join</button>
             </form>
         </div>
     </div>
+
+    <!-- Template rooms -->
+    <script id="roomsTemplate" type="text/html">
+        {{#rooms}}
+            <option value="{{.}}">{{.}}</option>
+        {{/rooms}}
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
+    <script src="socket.io/socket.io.js"></script>
+    <script src="/js/index.js"></script>
 </body>
 </html>
