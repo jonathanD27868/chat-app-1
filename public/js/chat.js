@@ -13,26 +13,7 @@ const locationTemplate = document.querySelector('#location-message-template').in
 const sidebarTemplate = document.querySelector('#sidebar-template').innerHTML
 
 //options
-const { username, createRoom, joinRoom } = Qs.parse(location.search, { ignoreQueryPrefix: true })
-
-// check joining choice
-const roomCheck = () =>{
-
-    console.log(createRoom);
-    console.log(joinRoom);
-    
-    if(createRoom && joinRoom){
-        alert("Create a room OR select an existing one")
-        location.href = '/'
-        return
-    }
-    
-    return createRoom ? createRoom : joinRoom
-}
-
-const room = roomCheck()
-console.log('room', room);
-
+const { username, room, joinRoom } = Qs.parse(location.search, { ignoreQueryPrefix: true })
 
 const autoscroll = () => {
     /*
@@ -145,7 +126,7 @@ $sendLocationButton.addEventListener('click', (e) => {
 })
 
 // while joinin the chat
-socket.emit('join', { username, room }, (error) => {
+socket.emit('join', { username, room || joinRoom.trim() }, (error) => {
     if(error){
         alert(error)
         location.href = '/'
