@@ -95,6 +95,12 @@ socket.on('locationMessage', (message) => {
 
 // users' list in sidebar
 socket.on('roomData', ({ room, users }) => {
+    let roomTitle = document.querySelector('.room-title')
+
+    // if room is different from the room displayed in html we ignore the message
+    if (roomTitle && roomTitle.textContent !== room) {
+        return
+    }
     const html = Mustache.render(sidebarTemplate, {
         room,
         users
